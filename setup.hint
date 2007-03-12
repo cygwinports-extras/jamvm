@@ -1,0 +1,10 @@
+category: Java Interpreters
+requires: cygwin classpath zlib
+sdesc: "Small yet complete Java Virtual Machine"
+ldesc: "JamVM is a Java Virtual Machine which conforms to the JVM 
+specification version 2 (blue book).  In comparison to most other VM's 
+(free and commercial) it is extremely small, with a stripped executable 
+on PowerPC of only ~170K, and Intel 130K.  However, unlike other small 
+VMs (e.g. KVM) it is designed to support the full specification, and 
+includes support for object finalisation, soft/weak/phantom references, 
+the Java Native Interface (JNI) and the Reflection API."

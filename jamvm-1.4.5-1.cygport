@@ -1,0 +1,6 @@
+DESCRIPTION=
+HOMEPAGE="http://jamvm.sourceforge.net/"
+SRC_URI=mirror://sourceforge/${PN}/${P}.tar.bz2
+
+CYGCONF_ARGS="--includedir=/usr/include/${PN}
+	--with-classpath-install-dir=/usr --disable-ffi"
