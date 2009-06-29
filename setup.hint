@@ -1,5 +1,5 @@
 category: Java Interpreters
-requires: cygwin classpath zlib
+requires: classpath zlib
 sdesc: "Small yet complete Java Virtual Machine"
 ldesc: "JamVM is a Java Virtual Machine which conforms to the JVM 
 specification version 2 (blue book).  In comparison to most other VM's 
