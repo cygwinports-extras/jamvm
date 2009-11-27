@@ -9,21 +9,22 @@ support for object finalisation, soft/weak/phantom references, the Java
 Native Interface (JNI) and the Reflection API.
 
 Runtime requirements:
-  cygwin-1.5.24-2
-  classpath-0.93-1
-  zlib-1.2.3-2
+  classpath-0.98-1
+  cygwin-1.7.0-64
+  libffi4-4.3.4-1
+  libgcc1-4.3.4-1
+  zlib0-1.2.3-10
 
 Build requirements:
 (besides corresponding -devel packages)
-  cygwin-1.5.24-2
-  autoconf2.5-2.61-1
-  automake1.9-1.9.6-2
-  binutils-20060817-1
-  cygport-0.2.11-1
-  gawk-3.1.5-4
-  gcc-core-3.4.4-3
-  libtool1.5-1.5.23a-2
-  make-3.81-1
+  autoconf2.5-2.63-10
+  automake1.10-1.10.2-2
+  binutils-2.19.51-1
+  cygport-0.9.10-1
+  gawk-3.1.7-1
+  gcc4-core-4.3.4-1
+  libtool-2.2.7a-14
+  make-3.81-2
   sed-4.1.5-2
 
 Canonical website:
@@ -35,40 +36,22 @@ Canonical download:
 -------------------------------------------
 
 Build instructions:
-  unpack jamvm-1.4.5-X-src.tar.bz2
+  unpack jamvm-1.5.3-X-src.tar.bz2
     if you use setup to install this src package, it will be
 	 unpacked under /usr/src automatically
   cd /usr/src
-  cygport ./jamvm-1.4.5-X.cygport all
+  cygport ./jamvm-1.5.3-X.cygport all
 
 This will create:
-  /usr/src/jamvm-1.4.5-X-src.tar.bz2
-  /usr/src/jamvm-1.4.5-X.tar.bz2
+  /usr/src/jamvm-1.5.3-X-src.tar.bz2
+  /usr/src/jamvm-1.5.3-X.tar.bz2
 
 -------------------------------------------
 
-Files included in the binary package:
-
-  /usr/bin/cygjvm-0.dll
-  /usr/bin/jamvm.exe
-  /usr/include/jamvm/jni.h
-  /usr/lib/libjvm.dll.a
-  /usr/lib/libjvm.la
-  /usr/share/doc/Cygwin/jamvm-1.4.5.README
-  /usr/share/doc/jamvm-1.4.5/AUTHORS
-  /usr/share/doc/jamvm-1.4.5/COPYING
-  /usr/share/doc/jamvm-1.4.5/ChangeLog
-  /usr/share/doc/jamvm-1.4.5/INSTALL
-  /usr/share/doc/jamvm-1.4.5/NEWS
-  /usr/share/doc/jamvm-1.4.5/README
-  /usr/share/jamvm/classes.zip
-
-------------------
-
 Port Notes:
 
------ version 1.4.5-1 -----
-Initial release for Cygwin.
+----- version 1.5.3-1 -----
+Initial release for Cygwin 1.7.
 
 
 Cygwin port maintained by:

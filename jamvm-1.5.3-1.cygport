@@ -1,0 +1,19 @@
+DESCRIPTION="Java VM for GNU Classpath"
+HOMEPAGE="http://jamvm.sourceforge.net/"
+SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
+PATCH_URI="1.5.3-cygwin.patch"
+
+# int-inlining: causes segfaults
+CYGCONF_ARGS="
+	--includedir=/usr/include/${PN}
+	--with-classpath-install-dir=/usr
+	--disable-int-inlining
+	--enable-ffi
+"
+
+src_install() {
+	cd ${B}
+	cyginstall
+
+	dosym jamvm.exe /usr/bin/java
+}
