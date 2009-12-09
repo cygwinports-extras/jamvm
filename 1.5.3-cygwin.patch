@@ -1,5 +1,5 @@
---- origsrc/jamvm-1.5.3/configure.ac	2009-04-13 20:05:57.000000000 -0500
-+++ src/jamvm-1.5.3/configure.ac	2009-11-09 01:40:16.016497300 -0600
+--- origsrc/jamvm-1.5.3/configure.ac	2009-11-27 03:00:22.029524700 -0600
++++ src/jamvm-1.5.3/configure.ac	2009-11-27 02:18:12.000000000 -0600
 @@ -32,6 +32,7 @@ case "$host" in
  i[[3456]]86-*-linux*) host_cpu=i386 host_os=linux ;;
  i[[3456]]86-*-kfreebsd*) host_cpu=i386 host_os=linux ;;
@@ -24,19 +24,19 @@
      lib/Makefile \
      lib/java/Makefile \
      lib/java/lang/Makefile \
---- origsrc/jamvm-1.5.3/src/Makefile.am	2009-01-02 02:14:14.000000000 -0600
-+++ src/jamvm-1.5.3/src/Makefile.am	2009-11-09 01:46:04.567905100 -0600
+--- origsrc/jamvm-1.5.3/src/Makefile.am	2009-11-27 03:00:22.029524700 -0600
++++ src/jamvm-1.5.3/src/Makefile.am	2009-12-01 22:39:17.538068400 -0600
 @@ -42,6 +42,8 @@ jamvm_LDADD = libcore.la
  libjvm_la_LIBADD = libcore.la
  libcore_la_LIBADD = interp/libinterp.la os/@os@/@arch@/libnative.la os/@os@/libos.la
  
-+libjvm_la_LDFLAGS = -no-undefined
++libjvm_la_LDFLAGS = -module -avoid-version -no-undefined
 +
  AM_CPPFLAGS = -I$(top_srcdir)/src/interp/engine
  
  DISTCLEANFILES = arch.h
---- origsrc/jamvm-1.5.3/src/os/Makefile.am	2008-12-06 16:05:08.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/Makefile.am	2009-11-09 01:42:01.940682000 -0600
+--- origsrc/jamvm-1.5.3/src/os/Makefile.am	2009-11-27 03:00:22.029524700 -0600
++++ src/jamvm-1.5.3/src/os/Makefile.am	2009-11-27 02:18:12.000000000 -0600
 @@ -20,5 +20,5 @@
  ##
  
@@ -45,7 +45,7 @@
 +DIST_SUBDIRS = linux darwin bsd cygwin solaris
  
 --- origsrc/jamvm-1.5.3/src/os/cygwin/Makefile.am	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/Makefile.am	2009-11-09 01:42:30.441931700 -0600
++++ src/jamvm-1.5.3/src/os/cygwin/Makefile.am	2009-11-27 02:18:12.000000000 -0600
 @@ -0,0 +1,28 @@
 +##
 +## Copyright (C) 2003, 2004, 2005, 2006, 2007
@@ -76,7 +76,7 @@
 +
 +AM_CPPFLAGS = -I$(top_builddir)/src
 --- origsrc/jamvm-1.5.3/src/os/cygwin/i386/Makefile.am	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/i386/Makefile.am	2009-11-09 01:41:51.285863400 -0600
++++ src/jamvm-1.5.3/src/os/cygwin/i386/Makefile.am	2009-12-05 20:17:13.058159600 -0600
 @@ -0,0 +1,25 @@
 +##
 +## Copyright (C) 2003, 2004, 2005, 2006, 2007
@@ -100,11 +100,11 @@
 +##
 +
 +noinst_LTLIBRARIES = libnative.la
-+libnative_la_SOURCES = init.c dll_md.c
++libnative_la_SOURCES = dll_md.c init.c
 +
 +AM_CPPFLAGS = -I$(top_builddir)/src
 --- origsrc/jamvm-1.5.3/src/os/cygwin/i386/dll_md.c	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/i386/dll_md.c	2009-11-09 01:41:51.270263400 -0600
++++ src/jamvm-1.5.3/src/os/cygwin/i386/dll_md.c	2009-12-05 20:17:02.387741000 -0600
 @@ -0,0 +1,93 @@
 +/*
 + * Copyright (C) 2003, 2004, 2005, 2006, 2007
@@ -200,7 +200,7 @@
 +}
 +#endif
 --- origsrc/jamvm-1.5.3/src/os/cygwin/i386/init.c	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/i386/init.c	2009-11-09 02:31:33.517100600 -0600
++++ src/jamvm-1.5.3/src/os/cygwin/i386/init.c	2009-11-27 02:18:12.000000000 -0600
 @@ -0,0 +1,26 @@
 +/*
 + * Copyright (C) 2003, 2004, 2006, 2007
@@ -229,8 +229,8 @@
 +void initialisePlatform() {
 +}
 --- origsrc/jamvm-1.5.3/src/os/cygwin/os.c	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/os.c	2009-11-09 01:44:48.392972300 -0600
-@@ -0,0 +1,62 @@
++++ src/jamvm-1.5.3/src/os/cygwin/os.c	2009-12-06 13:44:17.574776900 -0600
+@@ -0,0 +1,66 @@
 +/*
 + * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008
 + * Robert Lougher <rob@lougher.org.uk>.
@@ -257,14 +257,18 @@
 +#include <stdlib.h>
 +#include <dlfcn.h>
 +#include <unistd.h>
-+
-+#define __USE_GNU
-+#include <pthread.h>
++#define WIN32_LEAN_AND_MEAN
++#include <windows.h>
 +
 +#include "../../jam.h"
 +
 +void *nativeStackBase() {
-+	return NULL;
++	/* from WebKit JavaScriptCore/runtime/Collector.cpp */
++	NT_TIB* pTib;
++	asm ( "movl %%fs:0x18, %0\n"
++	     : "=r" (pTib)
++	);
++	return pTib->StackBase;
 +}
 +
 +int nativeAvailableProcessors() {

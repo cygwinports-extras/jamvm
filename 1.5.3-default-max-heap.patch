@@ -1,0 +1,11 @@
+--- origsrc/jamvm-1.5.3/src/jam.h	2009-04-05 17:44:53.000000000 -0500
++++ src/jamvm-1.5.3/src/jam.h	2009-12-01 23:03:33.100019200 -0600
+@@ -735,7 +735,7 @@ typedef struct InitArgs {
+ 
+ /* default maximum size of object heap */
+ #ifndef DEFAULT_MAX_HEAP
+-#define DEFAULT_MAX_HEAP 128*MB
++#define DEFAULT_MAX_HEAP 256*MB
+ #endif
+ 
+ /* default size of the Java stack */

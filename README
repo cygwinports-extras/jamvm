@@ -9,9 +9,8 @@ support for object finalisation, soft/weak/phantom references, the Java
 Native Interface (JNI) and the Reflection API.
 
 Runtime requirements:
-  classpath-0.98-1
-  cygwin-1.7.0-64
-  libffi4-4.3.4-1
+  cygwin-1.7.0-67
+  java-classpath-0.98-1
   libgcc1-4.3.4-1
   zlib0-1.2.3-10
 
