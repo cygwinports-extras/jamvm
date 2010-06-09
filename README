@@ -9,22 +9,22 @@ support for object finalisation, soft/weak/phantom references, the Java
 Native Interface (JNI) and the Reflection API.
 
 Runtime requirements:
-  cygwin-1.7.0-67
-  java-classpath-0.98-1
-  libgcc1-4.3.4-1
+  cygwin-1.7.5-1
+  java-classpath-0.98-2
+  libgcc1-4.3.4-3
   zlib0-1.2.3-10
 
 Build requirements:
 (besides corresponding -devel packages)
-  autoconf2.5-2.63-10
-  automake1.10-1.10.2-2
-  binutils-2.19.51-1
-  cygport-0.9.10-1
+  autoconf2.5-2.65-1
+  automake1.10-1.10.3-1
+  binutils-2.20.51-2
+  cygport-0.9.84-1
   gawk-3.1.7-1
-  gcc4-core-4.3.4-1
-  libtool-2.2.7a-14
+  gcc4-core-4.3.4-3
+  libtool-2.2.7a-15
   make-3.81-2
-  sed-4.1.5-2
+  sed-4.2.1-1
 
 Canonical website:
   http://jamvm.sourceforge.net/
@@ -48,6 +48,9 @@ This will create:
 -------------------------------------------
 
 Port Notes:
+
+----- version 1.5.3-2 -----
+Use malloc instead of mmap.
 
 ----- version 1.5.3-1 -----
 Initial release for Cygwin 1.7.

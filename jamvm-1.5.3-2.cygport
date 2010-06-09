@@ -6,6 +6,7 @@ PATCH_URI="1.5.3-cygwin.patch
            1.5.3-default-max-heap.patch"
 
 DISTCLEANFILES="src/os/cygwin/*/* src/os/cygwin/*.*"
+CPPFLAGS+=" -DUSE_MALLOC"
 
 # int-inlining: causes segfaults
 CYGCONF_ARGS="
