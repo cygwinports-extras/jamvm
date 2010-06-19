@@ -2,8 +2,11 @@ DESCRIPTION="Java VM for GNU Classpath"
 HOMEPAGE="http://jamvm.sourceforge.net/"
 SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
 
-PATCH_URI="1.5.3-cygwin.patch
-           1.5.3-default-max-heap.patch"
+PATCH_URI="
+	1.5.3-cygwin.patch
+	1.5.3-default-max-heap.patch
+	1.5.3-disable-asserts.patch
+"
 
 DISTCLEANFILES="src/os/cygwin/*/* src/os/cygwin/*.*"
 CPPFLAGS+=" -DUSE_MALLOC"

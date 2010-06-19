@@ -19,7 +19,7 @@ Build requirements:
   autoconf2.5-2.65-1
   automake1.10-1.10.3-1
   binutils-2.20.51-2
-  cygport-0.9.84-1
+  cygport-0.9.85-1
   gawk-3.1.7-1
   gcc4-core-4.3.4-3
   libtool-2.2.7a-15
@@ -48,6 +48,9 @@ This will create:
 -------------------------------------------
 
 Port Notes:
+
+----- version 1.5.3-3 -----
+Disabled assertions for compatibility with other VMs default behaviour.
 
 ----- version 1.5.3-2 -----
 Use malloc instead of mmap.

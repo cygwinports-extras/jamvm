@@ -1,0 +1,14 @@
+Most VMs disable asserts by default, only enabling them with an option 
+(e.g. "-ea" on OpenJDK).
+
+--- origsrc/jamvm-1.5.3/lib/java/lang/VMClassLoader.java	2009-04-07 17:17:40.000000000 -0500
++++ src/jamvm-1.5.3/lib/java/lang/VMClassLoader.java	2010-06-18 03:40:38.839458800 -0500
+@@ -264,7 +264,7 @@ final class VMClassLoader
+    */
+   static final boolean defaultAssertionStatus()
+   {
+-    return true;
++    return false;
+   }
+ 
+   /**
