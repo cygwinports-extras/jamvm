@@ -1,5 +1,5 @@
---- VMField.java	2009/01/02 08:06:27	1.1
-+++ VMField.java	2009/04/30 00:32:53	1.2
+--- a/lib/java/lang/reflect/VMField.java	2009/01/02 08:06:27	1.1
++++ b/lib/java/lang/reflect/VMField.java	2009/04/30 00:32:53	1.2
 @@ -519,7 +519,14 @@
     *         <code>null</code> if no such annotation exists.
     * @throws NullPointerException if the annotation class is <code>null</code>.

@@ -12,3 +12,20 @@ Most VMs disable asserts by default, only enabling them with an option
    }
  
    /**
+--- origsrc/jamvm-1.5.3/src/jam.c	2009-01-31 02:13:37.000000000 -0600
++++ src/jamvm-1.5.3/src/jam.c	2012-01-09 04:30:45.900787200 -0600
+@@ -329,6 +329,14 @@ int parseCommandLine(int argc, char *arg
+         /* Compatibility options */
+         } else if(strcmp(argv[i], "-client") == 0 ||
+                   strcmp(argv[i], "-server") == 0 ||
++                  strcmp(argv[i], "-da") == 0 ||
++                  strcmp(argv[i], "-disableassertions") == 0 ||
++                  strcmp(argv[i], "-ea") == 0 ||
++                  strcmp(argv[i], "-enableassertions") == 0 ||
++                  strncmp(argv[i], "-da:", 4) == 0 ||
++                  strncmp(argv[i], "-disableassertions:", 19) == 0 ||
++                  strncmp(argv[i], "-ea:", 4) == 0 ||
++                  strncmp(argv[i], "-enableassertions:", 18) == 0 ||
+                   strncmp(argv[i], "-XX:PermSize=", 13) == 0 ||
+                   strncmp(argv[i], "-XX:MaxPermSize=", 16) == 0) {
+             /* Ignore */
