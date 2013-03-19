@@ -1,6 +1,6 @@
---- origsrc/jamvm-1.5.3/configure.ac	2009-11-27 03:00:22.029524700 -0600
-+++ src/jamvm-1.5.3/configure.ac	2009-11-27 02:18:12.000000000 -0600
-@@ -32,6 +32,7 @@ case "$host" in
+--- origsrc/jamvm-1.5.3/configure.ac	2009-04-13 20:05:57.000000000 -0500
++++ src/jamvm-1.5.3/configure.ac	2013-03-18 22:40:22.072592500 -0500
+@@ -32,11 +32,13 @@ case "$host" in
  i[[3456]]86-*-linux*) host_cpu=i386 host_os=linux ;;
  i[[3456]]86-*-kfreebsd*) host_cpu=i386 host_os=linux ;;
  i[[3456]]86-*-darwin*) host_cpu=i386 host_os=darwin ;;
@@ -8,6 +8,49 @@
  arm*-*-darwin*) host_cpu=arm host_os=darwin libdl_needed=no ;;
  i386-*-openbsd*) host_os=bsd libdl_needed=no ;;
  i386-*-freebsd*) host_os=bsd libdl_needed=no ;;
+ i386-*-solaris*) host_cpu=x86 host_os=solaris ;;
+ x86_64-*-linux*) host_os=linux ;;
++x86_64-*-cygwin*) host_os=cygwin libdl_needed=no ;;
+ hppa*-*-linux*) host_cpu=parisc host_os=linux ;;
+ mipsel-*-linux*) host_cpu=mips host_os=linux ;;
+ amd64-*-openbsd*) host_os=bsd libdl_needed=no ;;
+@@ -226,6 +228,7 @@ AC_PROG_CC
+ AM_PROG_AS
+ 
+ AC_CHECK_PROGS(JAVAC, ecj jikes "gcj -C" javac)
++PKG_PROG_PKG_CONFIG
+ 
+ dnl Checks for libraries.
+ 
+@@ -241,7 +244,7 @@ if test "$enable_zip" != no; then
+ fi
+ 
+ if test "$enable_ffi" != no; then
+-    AC_CHECK_LIB(ffi,ffi_call,,AC_MSG_ERROR(libffi is missing))
++    PKG_CHECK_MODULES(FFI,libffi,,AC_MSG_ERROR(libffi is missing))
+ fi
+ 
+ dnl Checks for header files.
+@@ -252,10 +255,6 @@ if test "$enable_zip" != no; then
+     AC_CHECK_HEADER(zlib.h,,AC_MSG_ERROR(zlib.h is missing))
+ fi
+ 
+-if test "$enable_ffi" != no; then
+-    AC_CHECK_HEADER(ffi.h,,AC_MSG_ERROR(ffi.h is missing))
+-fi
+-
+ if test "$enable_zip" != no; then
+     AC_DEFINE([USE_ZIP],1,[use zip])
+     use_zip_yes=
+@@ -270,6 +269,8 @@ AC_SUBST(use_zip_no)
+ 
+ if test "$enable_ffi" != no; then
+     AC_DEFINE([USE_FFI],1,[use FFI])
++    CFLAGS="$CFLAGS $FFI_CFLAGS"
++    LIBS="$LIBS $FFI_LIBS"
+ fi
+ 
+ dnl Checks for typedefs, structures, and compiler characteristics.
 @@ -307,6 +308,7 @@ AC_CONFIG_FILES(
      src/os/linux/Makefile \
      src/os/darwin/Makefile \
@@ -16,36 +59,37 @@
      src/os/solaris/Makefile \
      src/os/solaris/x86/Makefile \
      src/os/linux/powerpc/Makefile \
-@@ -322,6 +324,7 @@ AC_CONFIG_FILES(
+@@ -322,6 +324,8 @@ AC_CONFIG_FILES(
      src/os/bsd/arm/Makefile \
      src/os/bsd/i386/Makefile \
      src/os/bsd/x86_64/Makefile \
 +    src/os/cygwin/i386/Makefile \
++    src/os/cygwin/x86_64/Makefile \
      lib/Makefile \
      lib/java/Makefile \
      lib/java/lang/Makefile \
---- origsrc/jamvm-1.5.3/src/Makefile.am	2009-11-27 03:00:22.029524700 -0600
-+++ src/jamvm-1.5.3/src/Makefile.am	2009-12-01 22:39:17.538068400 -0600
+--- origsrc/jamvm-1.5.3/src/Makefile.am	2009-01-02 02:14:14.000000000 -0600
++++ src/jamvm-1.5.3/src/Makefile.am	2013-03-18 22:40:30.093051200 -0500
 @@ -42,6 +42,8 @@ jamvm_LDADD = libcore.la
  libjvm_la_LIBADD = libcore.la
  libcore_la_LIBADD = interp/libinterp.la os/@os@/@arch@/libnative.la os/@os@/libos.la
  
-+libjvm_la_LDFLAGS = -module -avoid-version -no-undefined
++libjvm_la_LDFLAGS = -avoid-version -no-undefined
 +
  AM_CPPFLAGS = -I$(top_srcdir)/src/interp/engine
  
  DISTCLEANFILES = arch.h
---- origsrc/jamvm-1.5.3/src/os/Makefile.am	2009-11-27 03:00:22.029524700 -0600
-+++ src/jamvm-1.5.3/src/os/Makefile.am	2009-11-27 02:18:12.000000000 -0600
+--- origsrc/jamvm-1.5.3/src/os/Makefile.am	2008-12-06 16:05:08.000000000 -0600
++++ src/jamvm-1.5.3/src/os/Makefile.am	2013-03-18 21:43:35.000000000 -0500
 @@ -20,5 +20,5 @@
  ##
  
  SUBDIRS = @os@
 -DIST_SUBDIRS = linux darwin bsd solaris
-+DIST_SUBDIRS = linux darwin bsd cygwin solaris
++DIST_SUBDIRS = linux darwin bsd solaris cygwin
  
 --- origsrc/jamvm-1.5.3/src/os/cygwin/Makefile.am	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/Makefile.am	2009-11-27 02:18:12.000000000 -0600
++++ src/jamvm-1.5.3/src/os/cygwin/Makefile.am	2013-03-18 21:43:56.454946200 -0500
 @@ -0,0 +1,28 @@
 +##
 +## Copyright (C) 2003, 2004, 2005, 2006, 2007
@@ -69,14 +113,14 @@
 +##
 +
 +SUBDIRS = @arch@
-+DIST_SUBDIRS = i386
++DIST_SUBDIRS = i386 x86_64
 +
 +noinst_LTLIBRARIES = libos.la
 +libos_la_SOURCES = os.c
 +
 +AM_CPPFLAGS = -I$(top_builddir)/src
 --- origsrc/jamvm-1.5.3/src/os/cygwin/i386/Makefile.am	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/i386/Makefile.am	2009-12-05 20:17:13.058159600 -0600
++++ src/jamvm-1.5.3/src/os/cygwin/i386/Makefile.am	2013-03-18 21:48:50.100741800 -0500
 @@ -0,0 +1,25 @@
 +##
 +## Copyright (C) 2003, 2004, 2005, 2006, 2007
@@ -100,107 +144,11 @@
 +##
 +
 +noinst_LTLIBRARIES = libnative.la
-+libnative_la_SOURCES = dll_md.c init.c
++libnative_la_SOURCES = init.c
 +
 +AM_CPPFLAGS = -I$(top_builddir)/src
---- origsrc/jamvm-1.5.3/src/os/cygwin/i386/dll_md.c	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/i386/dll_md.c	2009-12-05 20:17:02.387741000 -0600
-@@ -0,0 +1,93 @@
-+/*
-+ * Copyright (C) 2003, 2004, 2005, 2006, 2007
-+ * Robert Lougher <rob@lougher.org.uk>.
-+ *
-+ * This file is part of JamVM.
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; either version 2,
-+ * or (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software
-+ * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-+ */
-+
-+#include "../../../jam.h"
-+
-+#ifndef USE_FFI
-+#include <string.h>
-+#include "../../../sig.h"
-+
-+#define RET_VOID    0
-+#define RET_DOUBLE  1
-+#define RET_LONG    2
-+#define RET_FLOAT   3
-+#define RET_DFLT    4
-+
-+int nativeExtraArg(MethodBlock *mb) {
-+    int len = strlen(mb->type);
-+    if(mb->type[len-2] == ')')
-+        switch(mb->type[len-1]) {
-+            case 'V':
-+                return RET_VOID;
-+            case 'D':
-+                return RET_DOUBLE;
-+            case 'J':
-+                return RET_LONG;
-+            case 'F':
-+                return RET_FLOAT;
-+        }
-+
-+    return RET_DFLT;
-+}
-+
-+u4 *callJNIMethod(void *env, Class *class, char *sig, int ret_type, u4 *ostack, unsigned char *f, int args) {
-+    u4 *opntr = ostack + args;
-+    int i;
-+
-+    for(i = 0; i < args; i++)
-+        asm volatile ("pushl %0" :: "m" (*--opntr) : "sp");
-+
-+    if(class) {
-+        asm volatile ("pushl %0" :: "m" (class) : "sp");
-+	args++;
-+    }
-+
-+    asm volatile ("pushl %0" :: "m" (env) : "sp");
-+
-+    switch(ret_type) {
-+        case RET_VOID:
-+            (*(void (*)())f)();
-+            break;
-+
-+        case RET_DOUBLE:
-+            *(double*)ostack = (*(double (*)())f)();
-+            ostack += 2;
-+            break;
-+
-+        case RET_LONG:
-+            *(long long*)ostack = (*(long long (*)())f)();
-+            ostack += 2;
-+            break;
-+
-+        case RET_FLOAT:
-+            *(float*)ostack = (*(float (*)())f)();
-+            ostack++;
-+            break;
-+
-+        default:
-+            *ostack++ = (*(u4 (*)())f)();
-+            break;
-+    }
-+
-+    asm volatile ("addl %0,%%esp" :: "r" ((args + 1) * sizeof(u4)) : "cc", "sp");
-+    return ostack;
-+}
-+#endif
 --- origsrc/jamvm-1.5.3/src/os/cygwin/i386/init.c	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/i386/init.c	2009-11-27 02:18:12.000000000 -0600
++++ src/jamvm-1.5.3/src/os/cygwin/i386/init.c	2013-03-18 21:43:35.000000000 -0500
 @@ -0,0 +1,26 @@
 +/*
 + * Copyright (C) 2003, 2004, 2006, 2007
@@ -229,8 +177,8 @@
 +void initialisePlatform() {
 +}
 --- origsrc/jamvm-1.5.3/src/os/cygwin/os.c	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/os.c	2009-12-06 13:44:17.574776900 -0600
-@@ -0,0 +1,66 @@
++++ src/jamvm-1.5.3/src/os/cygwin/os.c	2013-03-18 21:50:32.918622600 -0500
+@@ -0,0 +1,67 @@
 +/*
 + * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008
 + * Robert Lougher <rob@lougher.org.uk>.
@@ -257,22 +205,23 @@
 +#include <stdlib.h>
 +#include <dlfcn.h>
 +#include <unistd.h>
-+#define WIN32_LEAN_AND_MEAN
-+#include <windows.h>
++#include <pthread.h>
 +
 +#include "../../jam.h"
 +
 +void *nativeStackBase() {
-+	/* from WebKit JavaScriptCore/runtime/Collector.cpp */
-+	NT_TIB* pTib;
-+	asm ( "movl %%fs:0x18, %0\n"
-+	     : "=r" (pTib)
-+	);
-+	return pTib->StackBase;
++    pthread_attr_t attr;
++    void *addr;
++    size_t size;
++
++    pthread_getattr_np(pthread_self(), &attr);
++    pthread_attr_getstack(&attr, &addr, &size);
++
++    return addr+size;
 +}
 +
 +int nativeAvailableProcessors() {
-+	return sysconf(_SC_NPROCESSORS_ONLN);
++    return sysconf(_SC_NPROCESSORS_ONLN);
 +}
 +
 +char *nativeLibPath() {
@@ -296,4 +245,61 @@
 +
 +   sprintf(buff, "cyg%s.dll", name);
 +   return buff;
++}
+--- origsrc/jamvm-1.5.3/src/os/cygwin/x86_64/Makefile.am	1969-12-31 18:00:00.000000000 -0600
++++ src/jamvm-1.5.3/src/os/cygwin/x86_64/Makefile.am	2013-03-18 21:50:50.490627700 -0500
+@@ -0,0 +1,25 @@
++##
++## Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008
++## Robert Lougher <rob@lougher.org.uk>.
++##
++## This file is part of JamVM.
++##
++## This program is free software; you can redistribute it and/or
++## modify it under the terms of the GNU General Public License
++## as published by the Free Software Foundation; either version 2,
++## or (at your option) any later version.
++##
++## This program is distributed in the hope that it will be useful,
++## but WITHOUT ANY WARRANTY; without even the implied warranty of
++## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++## GNU General Public License for more details.
++##
++## You should have received a copy of the GNU General Public License
++## along with this program; if not, write to the Free Software
++## Foundation, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
++##
++
++noinst_LTLIBRARIES = libnative.la
++libnative_la_SOURCES = init.c
++
++AM_CPPFLAGS = -I$(top_builddir)/src
+--- origsrc/jamvm-1.5.3/src/os/cygwin/x86_64/init.c	1969-12-31 18:00:00.000000000 -0600
++++ src/jamvm-1.5.3/src/os/cygwin/x86_64/init.c	2013-03-18 21:43:35.000000000 -0500
+@@ -0,0 +1,26 @@
++/*
++ * Copyright (C) 2003, 2004, 2006, 2007
++ * Robert Lougher <rob@lougher.org.uk>.
++ *
++ * This file is part of JamVM.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version 2,
++ * or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
++ */
++
++void setDoublePrecision() {
++}
++
++void initialisePlatform() {
 +}
