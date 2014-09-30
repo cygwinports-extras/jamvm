@@ -1,6 +1,6 @@
 NAME="jamvm"
-VERSION=1.5.3
-RELEASE=6
+VERSION=1.5.4
+RELEASE=1
 CATEGORY="Java"
 SUMMARY="Small yet complete Java Virtual Machine"
 DESCRIPTION="JamVM is a Java Virtual Machine which conforms to the JVM
@@ -12,18 +12,14 @@ includes support for object finalisation, soft/weak/phantom references,
 the Java Native Interface (JNI) and the Reflection API."
 REQUIRES="java-classpath"
 HOMEPAGE="http://jamvm.sourceforge.net/"
-SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
-
+SRC_URI="mirror://sourceforge/jamvm/jamvm-${VERSION}.tar.gz"
 PATCH_URI="
-	1.5.3-cygwin.patch
-	1.5.3-default-max-heap.patch
+	1.5.4-cygwin.patch
 	1.5.3-disable-asserts.patch
-	1.5.3-getAnnotation.patch
 	1.5.3-java-awt-headless.patch
 "
 
 DISTCLEANFILES="src/os/cygwin/*/* src/os/cygwin/*.*"
-CPPFLAGS+=" -DUSE_MALLOC"
 
 # int-inlining: causes segfaults
 CYGCONF_ARGS="
@@ -40,3 +36,5 @@ src_install() {
 	dosym jamvm.exe /usr/bin/java
 	dosym /usr/share/classpath/tools.zip /usr/lib/tools.jar
 }
+
+KEEP_LA_FILES=none

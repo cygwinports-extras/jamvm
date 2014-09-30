@@ -1,5 +1,5 @@
---- origsrc/jamvm-1.5.3/configure.ac	2009-04-13 20:05:57.000000000 -0500
-+++ src/jamvm-1.5.3/configure.ac	2013-03-18 22:40:22.072592500 -0500
+--- origsrc/jamvm-1.5.4/configure.ac	2014-08-03 16:51:42.451080800 -0500
++++ src/jamvm-1.5.4/configure.ac	2014-08-03 16:43:45.000000000 -0500
 @@ -32,11 +32,13 @@ case "$host" in
  i[[3456]]86-*-linux*) host_cpu=i386 host_os=linux ;;
  i[[3456]]86-*-kfreebsd*) host_cpu=i386 host_os=linux ;;
@@ -13,8 +13,8 @@
 +x86_64-*-cygwin*) host_os=cygwin libdl_needed=no ;;
  hppa*-*-linux*) host_cpu=parisc host_os=linux ;;
  mipsel-*-linux*) host_cpu=mips host_os=linux ;;
- amd64-*-openbsd*) host_os=bsd libdl_needed=no ;;
-@@ -226,6 +228,7 @@ AC_PROG_CC
+ x86_64-*-openbsd*) host_os=bsd libdl_needed=no ;;
+@@ -229,6 +231,7 @@ AC_PROG_CC
  AM_PROG_AS
  
  AC_CHECK_PROGS(JAVAC, ecj jikes "gcj -C" javac)
@@ -22,7 +22,7 @@
  
  dnl Checks for libraries.
  
-@@ -241,7 +244,7 @@ if test "$enable_zip" != no; then
+@@ -248,7 +251,7 @@ if test "$enable_zip" != no; then
  fi
  
  if test "$enable_ffi" != no; then
@@ -31,7 +31,7 @@
  fi
  
  dnl Checks for header files.
-@@ -252,10 +255,6 @@ if test "$enable_zip" != no; then
+@@ -259,10 +262,6 @@ if test "$enable_zip" != no; then
      AC_CHECK_HEADER(zlib.h,,AC_MSG_ERROR(zlib.h is missing))
  fi
  
@@ -42,7 +42,7 @@
  if test "$enable_zip" != no; then
      AC_DEFINE([USE_ZIP],1,[use zip])
      use_zip_yes=
-@@ -270,6 +269,8 @@ AC_SUBST(use_zip_no)
+@@ -277,6 +276,8 @@ AC_SUBST(use_zip_no)
  
  if test "$enable_ffi" != no; then
      AC_DEFINE([USE_FFI],1,[use FFI])
@@ -51,7 +51,7 @@
  fi
  
  dnl Checks for typedefs, structures, and compiler characteristics.
-@@ -307,6 +308,7 @@ AC_CONFIG_FILES(
+@@ -322,6 +323,7 @@ AC_CONFIG_FILES(
      src/os/linux/Makefile \
      src/os/darwin/Makefile \
      src/os/bsd/Makefile \
@@ -59,18 +59,23 @@
      src/os/solaris/Makefile \
      src/os/solaris/x86/Makefile \
      src/os/linux/powerpc/Makefile \
-@@ -322,6 +324,8 @@ AC_CONFIG_FILES(
-     src/os/bsd/arm/Makefile \
+@@ -338,6 +340,8 @@ AC_CONFIG_FILES(
      src/os/bsd/i386/Makefile \
      src/os/bsd/x86_64/Makefile \
+     src/os/bsd/sparc/Makefile \
 +    src/os/cygwin/i386/Makefile \
 +    src/os/cygwin/x86_64/Makefile \
      lib/Makefile \
      lib/java/Makefile \
      lib/java/lang/Makefile \
---- origsrc/jamvm-1.5.3/src/Makefile.am	2009-01-02 02:14:14.000000000 -0600
-+++ src/jamvm-1.5.3/src/Makefile.am	2013-03-18 22:40:30.093051200 -0500
-@@ -42,6 +42,8 @@ jamvm_LDADD = libcore.la
+--- origsrc/jamvm-1.5.4/src/Makefile.am	2014-08-03 16:51:42.451080800 -0500
++++ src/jamvm-1.5.4/src/Makefile.am	2014-08-03 16:53:51.281258600 -0500
+@@ -39,10 +39,12 @@ libcore_la_SOURCES = alloc.c alloc.h cas
+ jamvm_SOURCES = jam.c
+ libjvm_la_SOURCES =
+ 
+-jamvm_LDADD = libcore.la
++jamvm_LDADD = libjvm.la
  libjvm_la_LIBADD = libcore.la
  libcore_la_LIBADD = interp/libinterp.la os/@os@/@arch@/libnative.la os/@os@/libos.la
  
@@ -79,8 +84,8 @@
  AM_CPPFLAGS = -I$(top_srcdir)/src/interp/engine
  
  DISTCLEANFILES = arch.h
---- origsrc/jamvm-1.5.3/src/os/Makefile.am	2008-12-06 16:05:08.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/Makefile.am	2013-03-18 21:43:35.000000000 -0500
+--- origsrc/jamvm-1.5.4/src/os/Makefile.am	2014-08-03 16:51:42.461080800 -0500
++++ src/jamvm-1.5.4/src/os/Makefile.am	2014-08-03 16:43:45.000000000 -0500
 @@ -20,5 +20,5 @@
  ##
  
@@ -88,8 +93,8 @@
 -DIST_SUBDIRS = linux darwin bsd solaris
 +DIST_SUBDIRS = linux darwin bsd solaris cygwin
  
---- origsrc/jamvm-1.5.3/src/os/cygwin/Makefile.am	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/Makefile.am	2013-03-18 21:43:56.454946200 -0500
+--- origsrc/jamvm-1.5.4/src/os/cygwin/Makefile.am	1969-12-31 18:00:00.000000000 -0600
++++ src/jamvm-1.5.4/src/os/cygwin/Makefile.am	2014-08-03 16:43:45.000000000 -0500
 @@ -0,0 +1,28 @@
 +##
 +## Copyright (C) 2003, 2004, 2005, 2006, 2007
@@ -119,8 +124,8 @@
 +libos_la_SOURCES = os.c
 +
 +AM_CPPFLAGS = -I$(top_builddir)/src
---- origsrc/jamvm-1.5.3/src/os/cygwin/i386/Makefile.am	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/i386/Makefile.am	2013-03-18 21:48:50.100741800 -0500
+--- origsrc/jamvm-1.5.4/src/os/cygwin/i386/Makefile.am	1969-12-31 18:00:00.000000000 -0600
++++ src/jamvm-1.5.4/src/os/cygwin/i386/Makefile.am	2014-08-03 16:43:45.000000000 -0500
 @@ -0,0 +1,25 @@
 +##
 +## Copyright (C) 2003, 2004, 2005, 2006, 2007
@@ -147,8 +152,8 @@
 +libnative_la_SOURCES = init.c
 +
 +AM_CPPFLAGS = -I$(top_builddir)/src
---- origsrc/jamvm-1.5.3/src/os/cygwin/i386/init.c	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/i386/init.c	2013-03-18 21:43:35.000000000 -0500
+--- origsrc/jamvm-1.5.4/src/os/cygwin/i386/init.c	1969-12-31 18:00:00.000000000 -0600
++++ src/jamvm-1.5.4/src/os/cygwin/i386/init.c	2014-08-03 18:11:08.631450700 -0500
 @@ -0,0 +1,26 @@
 +/*
 + * Copyright (C) 2003, 2004, 2006, 2007
@@ -171,14 +176,14 @@
 + * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 + */
 +
-+void setDoublePrecision() {
++void setDoublePrecision(void) {
 +}
 +
-+void initialisePlatform() {
++void initialisePlatform(void) {
 +}
---- origsrc/jamvm-1.5.3/src/os/cygwin/os.c	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/os.c	2013-03-18 21:50:32.918622600 -0500
-@@ -0,0 +1,67 @@
+--- origsrc/jamvm-1.5.4/src/os/cygwin/os.c	1969-12-31 18:00:00.000000000 -0600
++++ src/jamvm-1.5.4/src/os/cygwin/os.c	2014-08-03 16:51:34.271069500 -0500
+@@ -0,0 +1,71 @@
 +/*
 + * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008
 + * Robert Lougher <rob@lougher.org.uk>.
@@ -240,14 +245,18 @@
 +    return dlsym(handle, symbol);
 +}
 +
++char *nativeLibError(void) {
++    return dlerror();
++}
++
 +char *nativeLibMapName(char *name) {
 +   char *buff = sysMalloc(strlen(name) + sizeof("cyg.dll") + 1);
 +
 +   sprintf(buff, "cyg%s.dll", name);
 +   return buff;
 +}
---- origsrc/jamvm-1.5.3/src/os/cygwin/x86_64/Makefile.am	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/x86_64/Makefile.am	2013-03-18 21:50:50.490627700 -0500
+--- origsrc/jamvm-1.5.4/src/os/cygwin/x86_64/Makefile.am	1969-12-31 18:00:00.000000000 -0600
++++ src/jamvm-1.5.4/src/os/cygwin/x86_64/Makefile.am	2014-08-03 16:43:45.000000000 -0500
 @@ -0,0 +1,25 @@
 +##
 +## Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008
@@ -274,8 +283,8 @@
 +libnative_la_SOURCES = init.c
 +
 +AM_CPPFLAGS = -I$(top_builddir)/src
---- origsrc/jamvm-1.5.3/src/os/cygwin/x86_64/init.c	1969-12-31 18:00:00.000000000 -0600
-+++ src/jamvm-1.5.3/src/os/cygwin/x86_64/init.c	2013-03-18 21:43:35.000000000 -0500
+--- origsrc/jamvm-1.5.4/src/os/cygwin/x86_64/init.c	1969-12-31 18:00:00.000000000 -0600
++++ src/jamvm-1.5.4/src/os/cygwin/x86_64/init.c	2014-08-03 18:11:15.567831500 -0500
 @@ -0,0 +1,26 @@
 +/*
 + * Copyright (C) 2003, 2004, 2006, 2007
@@ -298,8 +307,8 @@
 + * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 + */
 +
-+void setDoublePrecision() {
++void setDoublePrecision(void) {
 +}
 +
-+void initialisePlatform() {
++void initialisePlatform(void) {
 +}
